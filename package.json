@@ -1,0 +1,17 @@
+{
+  "name": "your-note",
+  "version": "1.0.0",
+  "description": "'write your note'",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "note"
+  ],
+  "author": "saye",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.3.0"
+  }
+}
