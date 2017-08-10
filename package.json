@@ -12,6 +12,17 @@
   "author": "saye",
   "license": "ISC",
   "dependencies": {
-    "koa": "^2.3.0"
+    "koa": "^2.3.0",
+    "koa-better-body": "^3.0.4",
+    "koa-better-router": "^2.1.1",
+    "koa-logger": "^3.0.1",
+    "koa-session": "^5.5.0",
+    "lodash": "^4.17.4",
+    "log4js": "^2.3.3",
+    "mongoose": "^4.11.6"
+  },
+  "devDependencies": {
+    "eslint": "^4.4.1",
+    "mocha": "^3.5.0"
   }
 }

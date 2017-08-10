@@ -1,0 +1,10 @@
+module.exports = {
+    OK: 0,
+    ERROR: 1,
+    WRONG_PARAMETERS: 2,
+
+    USER_NOT_EXISTS: 101,
+    WRONG_PASSWORD: 102,
+    EMAIL_EXISTS: 103,
+    USER_ALREAD_LOGIN: 104,
+};
