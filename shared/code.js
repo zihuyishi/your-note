@@ -7,4 +7,5 @@ module.exports = {
     WRONG_PASSWORD: 102,
     EMAIL_EXISTS: 103,
     USER_ALREAD_LOGIN: 104,
+    USER_NOT_LOGIN: 105
 };

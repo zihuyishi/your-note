@@ -1,8 +1,6 @@
 'use strict';
 const Code = require('../../shared/code');
-const Util = {
-
-};
+const Util = module.exports;
 
 Util.createError = function(msg, code) {
     code = code || Code.ERROR;
@@ -15,4 +13,9 @@ Util.createError = function(msg, code) {
     return err;
 };
 
-module.exports = Util;
+Util.userNotLogin = function(ctx) {
+    ctx.body = {
+        code: Code.USER_NOT_LOGIN,
+        message: 'user not login'
+    };
+};

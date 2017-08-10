@@ -6,32 +6,34 @@ const router = Router();
 const _ = require('lodash');
 const logger = require('../../utils/logger')('users');
 
-/**
- * get user by user id
- * /api/v1/users/:id
- */
-router.addRoute('GET /users/:uid', (ctx, next) => {
-    const userId = ctx.params.uid;
-    ctx.body = `your want user ${userId}`;
-});
 
 router.addRoute('POST /users/login', async (ctx, next) => {
+    if (ctx.session.uid) {
+        ctx.body = {
+            code: Code.USER_ALREAD_LOGIN,
+            message: 'user already login'
+        };
+        return ;
+    }
     const email = ctx.request.fields.email;
     const pass = ctx.request.fields.password;
-    let ret = await userService.login(email, pass);
-    if (ret.code !== Code.OK) {
+    try {
+        const user = await userService.login(email, pass);
+        const userJson = user.toJson();
+        delete userJson.password;
+        ctx.session.uid = user.id;
         ctx.body = {
-            code: ret
+            code: Code.OK,
+            data: userJson
         };
-    } else {
-        ctx.session.uid = ret.uid;
+    } catch (err) {
         ctx.body = {
-            code: Code.OK
+            code: err.code || Code.ERROR
         };
     }
 });
 
-router.addRoute('POST /users/logout', (ctx, next) => {
+router.addRoute('GET /users/logout', (ctx, next) => {
     if (!ctx.session.uid) {
         ctx.body = {
             code: Code.ERROR,
@@ -39,6 +41,9 @@ router.addRoute('POST /users/logout', (ctx, next) => {
         };
     } else {
         delete ctx.session.uid;
+        ctx.body = {
+            code: Code.OK
+        };
     }
 });
 
@@ -46,7 +51,7 @@ router.addRoute('POST /users/signup', async (ctx, next) => {
     if (ctx.session.uid) {
         ctx.body = {
             code: Code.USER_ALREAD_LOGIN,
-            message: 'user alread login'
+            message: 'user already login'
         };
     } else {
         const email = ctx.request.fields.email;

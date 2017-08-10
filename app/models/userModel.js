@@ -23,7 +23,6 @@ userSchema.statics.createUser = function(email, name, password) {
         return Counter.nextSequence('user');
     }).then(newUid => {
         const userJson = {id: newUid, name: name, email: email, password: password};
-        console.debug('create user', JSON.stringify(userJson));
         const newUser = new User(userJson);
         return newUser.save().then(() => {
             return newUser;

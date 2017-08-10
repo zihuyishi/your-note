@@ -1,10 +1,15 @@
 'use strict';
 const Code = require('../../shared/code');
 const User = require('../models/userModel');
+const util = require('../utils/util');
 
 class UserService {
     async getById(uid) {
 
+    }
+
+    async getByEmail(email) {
+        return User.findOne({email: email}).exec();
     }
 
     async createUser(email, name, password) {
@@ -12,14 +17,17 @@ class UserService {
     }
 
     async emailExists(email) {
-        return new Promise((resolve, reject) => {
-
-        });
     }
 
     async login(email, password) {
-        return new Promise((resolve, reject) => {
-            resolve({code: Code.OK, uid: 1});
+        return this.getByEmail(email).then(user => {
+            if (!user) {
+                throw util.createError('user not found', Code.USER_NOT_EXISTS);
+            } 
+            if (password != user.password) {
+                throw util.createError('wrong password', Code.WRONG_PASSWORD);
+            }
+            return user;
         });
     }
 }
