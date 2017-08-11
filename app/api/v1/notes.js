@@ -9,76 +9,60 @@ const util = require('../../utils/util');
 
 router.addRoute('GET /notes/latest', async (ctx, next) => {
     if (!ctx.session.uid) {
-        util.userNotLogin(ctx);
-        return ;
+        throw util.userNotLoginError();
     }
     let fields = ctx.request.fields || {};
     const pageSize = fields.pageSize || 10;
     const startIndex = fields.startIndex || 0;
-    try {
-        const notes = await noteService.getLatestByUid(ctx.session.uid, startIndex, pageSize);
-        const noteArr = notes.map(note => {
-            return note.toJson();
-        });
-        ctx.body = {
-            code: Code.OK,
-            data:noteArr 
-        };
-    } catch (err) {
-        logger.error('get latest note', err);
-        ctx.body = {
-            code: err.code || Code.ERROR
-        };
-    }
+    const notes = await noteService.getLatestByUid(ctx.session.uid, startIndex, pageSize);
+    const noteArr = notes.map(note => {
+        return note.toJson();
+    });
+    ctx.body = {
+        code: Code.OK,
+        data:noteArr 
+    };
 });
 
 router.addRoute('PUT /notes/new', async (ctx, next) => {
     if (!ctx.session.uid) {
-        util.userNotLogin(ctx);
-        return ;
+        throw util.userNotLoginError();
     }
     const title = ctx.request.fields.title;
     const content = ctx.request.fields.content;
-    try {
-        const note = await noteService.createNote(ctx.session.uid, title, content);
-        const noteJson = note.toJson();
-        ctx.body = {
-            code: Code.OK,
-            data: noteJson
-        };
-    } catch (err) {
-        logger.error('create note', err);
-        ctx.body = {
-            code: err.code || Code.ERROR
-        };
-    }
+    const note = await noteService.createNote(ctx.session.uid, title, content);
+    const noteJson = note.toJson();
+    ctx.body = {
+        code: Code.OK,
+        data: noteJson
+    };
 });
 
 router.addRoute('DELETE /notes/:id', async (ctx, next) => {
     if (!ctx.session.uid) {
-        util.userNotLogin(ctx);
-        return ;
+        throw util.userNotLoginError(ctx);
     }
     const _id = ctx.params.id;
-    try {
-        const note = await noteService.getById(_id);
-        if (note.uid != ctx.session.uid) {
-            ctx.body = {
-                code: Code.PERMISSION_DENIED,
-                message: 'permission denied'
-            };
-        }
-        const ret = await noteService.deleteNote(_id);
+    const note = await noteService.getById(_id);
+    if (note.uid != ctx.session.uid) {
         ctx.body = {
-            code: Code.OK
-        };
-    } catch (err) {
-        logger.error('delete note', err);
-        ctx.body = {
-            code: err.code || Code.ERROR
+            code: Code.PERMISSION_DENIED,
+            message: 'permission denied'
         };
     }
+    await noteService.deleteNote(_id);
+    ctx.body = {
+        code: Code.OK
+    };
+});
 
+router.addRoute('POST /notes/update/:id', async (ctx, next) => {
+    if (!ctx.session.uid) {
+        throw util.userNotLoginError();
+    }
+    const _id = ctx.params.id;
+    const title = ctx.request.fields.title;
+    const content = ctx.request.fields.content;
 });
 
 module.exports = router;

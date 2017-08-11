@@ -13,9 +13,6 @@ Util.createError = function(msg, code) {
     return err;
 };
 
-Util.userNotLogin = function(ctx) {
-    ctx.body = {
-        code: Code.USER_NOT_LOGIN,
-        message: 'user not login'
-    };
+Util.userNotLoginError = function() {
+    return this.createError('user not login', Code.USER_NOT_LOGIN);
 };

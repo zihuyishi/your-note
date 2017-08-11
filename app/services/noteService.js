@@ -16,6 +16,18 @@ class NoteService {
     async deleteNote(_id) {
         return Note.remove({_id: _id});
     }
+    async updateNote(_id, options) {
+        const keys = ['title', 'content'];
+        const opts = {};
+        for (let key of keys) {
+            if (options[key] != null) {
+                opts[key] = options[key];
+            }
+        }
+        const now = new Date();
+        opts.updateDate = now;
+        return Note.findByIdAndUpdate(_id, { $set: opts });
+    }
 }
 
 const singleton = new NoteService();

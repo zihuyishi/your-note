@@ -4,6 +4,7 @@ const Koa = require('koa');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const config = require('./config/server.json');
+const Code = require('./shared/code');
 
 const logger = require('./app/utils/logger')('index.js');
 const body = require('koa-better-body');
@@ -19,6 +20,27 @@ const sessionConfig = {
 app.use(session(sessionConfig, app))
     .use(koaLog())
     .use(body());
+
+// error handle
+app.use(async (ctx, next) => {
+    try {
+        await next();
+    } catch (err) {
+        let code = Code.ERROR;
+        let message = 'internal error';
+        if (err.code) {
+            code = err.code;
+            message = err.message;
+        } else {
+            logger.error('internal error', `path ${ctx.path}`);
+            logger.error('internal error', err);
+        }
+        ctx.body = {
+            code: code,
+            message: message
+        };
+    }
+});
 
 app.use(api.middleware());
 
