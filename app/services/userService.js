@@ -2,6 +2,8 @@
 const Code = require('../../shared/code');
 const User = require('../models/userModel');
 const util = require('../utils/util');
+const Consts = require('../../shared/consts');
+const _ = require('lodash');
 
 class UserService {
     async getById(uid) {
@@ -12,8 +14,9 @@ class UserService {
         return User.findOne({email: email}).exec();
     }
 
-    async createUser(email, name, password) {
-        return User.createUser(email, name, password);
+    async createUser(email, name, password, role) {
+        role = role || Consts.USER_ROLE.Normal;
+        return User.createUser(email, name, password, role);
     }
 
     async login(email, password) {
@@ -28,7 +31,14 @@ class UserService {
     }
 
     async updateUser(uid, options) {
-        return User.findOneAndUpdate({id: uid}, {$set: options});
+        const keys = ['password', 'name'];
+        const ops = {};
+        for (let key of keys) {
+            if (options[key] != null) {
+                ops[key] = options[key];
+            }
+        }
+        return User.findOneAndUpdate({id: uid}, {$set: ops});
     }
 }
 
