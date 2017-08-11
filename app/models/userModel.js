@@ -14,20 +14,16 @@ const userSchema = mongoose.Schema({
 userSchema.index({id: 1}, {unique: true});
 userSchema.index({email: 1}, {unique: true});
 
-userSchema.statics.createUser = function(email, name, password) {
-    return this.find({email: email}).exec().then(users => {
-        if (users && users.length !== 0) {
-            throw util.createError('email exists', Code.EMAIL_EXISTS);
-        }
-    }).then(() => {
-        return Counter.nextSequence('user');
-    }).then(newUid => {
-        const userJson = {id: newUid, name: name, email: email, password: password};
-        const newUser = new User(userJson);
-        return newUser.save().then(() => {
-            return newUser;
-        });
-    });
+userSchema.statics.createUser = async function(email, name, password) {
+    const user = await this.findOne({email: email}).exec();
+    if (user) {
+        throw util.createError('email exists', Code.EMAIL_EXISTS);
+    }
+    const newUid = await Counter.nextSequence('user');
+    const userJson = {id: newUid, name: name, email: email, password: password};
+    const newUser = new User(userJson);
+    await newUser.save();
+    return Promise.resolve(newUser);
 };
 
 userSchema.methods.toJson = function() {

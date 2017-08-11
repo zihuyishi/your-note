@@ -17,19 +17,18 @@ class UserService {
     }
 
     async login(email, password) {
-        return this.getByEmail(email).then(user => {
-            if (!user) {
-                throw util.createError('user not found', Code.USER_NOT_EXISTS);
-            } 
-            if (password != user.password) {
-                throw util.createError('wrong password', Code.WRONG_PASSWORD);
-            }
-            return user;
-        });
+        const user = await this.getByEmail(email);
+        if (!user) {
+            throw util.createError('user not found', Code.USER_NOT_EXISTS);
+        }
+        if (password != user.password) {
+            throw util.createError('wrong password', Code.WRONG_PASSWORD);
+        }
+        return Promise.resolve(user);
     }
 
     async updateUser(uid, options) {
-        return User.findOneAndUpdate({uid: uid}, {$set: options});
+        return User.findOneAndUpdate({id: uid}, {$set: options});
     }
 }
 
