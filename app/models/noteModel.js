@@ -36,6 +36,7 @@ noteSchema.statics.getLatestByUser = function(userId, startIndex, pageSize) {
 
 noteSchema.methods.toJson = function() {
     return {
+        _id: this._id,
         uid: this.uid,
         title: this.title,
         content: this.content,

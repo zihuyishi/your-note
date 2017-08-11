@@ -3,7 +3,7 @@ const Note = require('../models/noteModel');
 
 class NoteService {
     async getById(id) {
-
+        return Note.findById(id);
     }
     async getLatestByUid(uid, startIndex, pageSize) {
         return Note.getLatestByUser(uid, startIndex, pageSize);
@@ -13,8 +13,8 @@ class NoteService {
         const type = options.type || 0;
         return Note.createNote(uid, title, content, type);
     }
-    async deleteNote(id) {
-
+    async deleteNote(_id) {
+        return Note.remove({_id: _id});
     }
 }
 

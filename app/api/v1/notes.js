@@ -54,4 +54,31 @@ router.addRoute('PUT /notes/new', async (ctx, next) => {
     }
 });
 
+router.addRoute('DELETE /notes/:id', async (ctx, next) => {
+    if (!ctx.session.uid) {
+        util.userNotLogin(ctx);
+        return ;
+    }
+    const _id = ctx.params.id;
+    try {
+        const note = await noteService.getById(_id);
+        if (note.uid != ctx.session.uid) {
+            ctx.body = {
+                code: Code.PERMISSION_DENIED,
+                message: 'permission denied'
+            };
+        }
+        const ret = await noteService.deleteNote(_id);
+        ctx.body = {
+            code: Code.OK
+        };
+    } catch (err) {
+        logger.error('delete note', err);
+        ctx.body = {
+            code: err.code || Code.ERROR
+        };
+    }
+
+});
+
 module.exports = router;

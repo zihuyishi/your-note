@@ -2,6 +2,7 @@ module.exports = {
     OK: 0,
     ERROR: 1,
     WRONG_PARAMETERS: 2,
+    PERMISSION_DENIED: 3,
 
     USER_NOT_EXISTS: 101,
     WRONG_PASSWORD: 102,
