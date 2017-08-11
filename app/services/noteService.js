@@ -3,7 +3,7 @@ const Note = require('../models/noteModel');
 
 class NoteService {
     async getById(id) {
-        return Note.findById(id);
+        return Note.findById(id).exec();
     }
     async getLatestByUid(uid, startIndex, pageSize) {
         return Note.getLatestByUser(uid, startIndex, pageSize);

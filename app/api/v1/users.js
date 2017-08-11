@@ -5,6 +5,7 @@ const Router = require('koa-better-router');
 const router = Router();
 const _ = require('lodash');
 const logger = require('../../utils/logger')('users');
+const util = require('../../utils/util');
 
 
 router.addRoute('POST /users/login', async (ctx, next) => {
@@ -40,7 +41,7 @@ router.addRoute('GET /users/logout', (ctx, next) => {
             message: 'not login'
         };
     } else {
-        delete ctx.session.uid;
+        ctx.session = null;
         ctx.body = {
             code: Code.OK
         };
@@ -82,5 +83,64 @@ router.addRoute('POST /users/signup', async (ctx, next) => {
     }
 });
 
+router.addRoute('GET /users/current', async (ctx, next) => {
+    if (!ctx.session.uid) {
+        util.userNotLogin(ctx);
+        return ;
+    }
+
+    try {
+        const user = await userService.getById(ctx.session.uid);
+        if (user == undefined) {
+            ctx.body = {
+                code: Code.USER_NOT_EXISTS
+            };
+        } else {
+            const jsonUser = user.toJson();
+            delete jsonUser.password;
+            ctx.body = {
+                code: Code.OK,
+                data: jsonUser
+            };
+        }
+    } catch (err) {
+        logger.error('get current user', err);
+        ctx.body = {
+            code: err.code || Code.ERROR,
+            message: err.message
+        };
+    }
+});
+
+router.addRoute('POST /users/update', async (ctx, next) => {
+    if (!ctx.session.uid) {
+        util.userNotLogin(ctx);
+        return ;
+    }
+
+    const userId = ctx.session.uid;
+    const password = ctx.request.fields.password;
+    const name = ctx.request.fields.name;
+    if (password == undefined && name == undefined) {
+        ctx.body = {
+            code: Code.WRONG_PARAMETERS,
+            message: 'no parameters'
+        };
+        return ;
+    }
+
+    try {
+        let ret = userService.updateUser(userId, {password, name});
+        ctx.body = {
+            code: Code.OK
+        };
+    } catch (err) {
+        logger.error('update user', err);
+        ctx.body = {
+            code: err.code || Code.ERROR,
+            message: err.message
+        };
+    }
+});
 
 module.exports = router;

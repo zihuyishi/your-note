@@ -5,7 +5,7 @@ const util = require('../utils/util');
 
 class UserService {
     async getById(uid) {
-
+        return User.findOne({id: uid}).exec();
     }
 
     async getByEmail(email) {
@@ -14,9 +14,6 @@ class UserService {
 
     async createUser(email, name, password) {
         return User.createUser(email, name, password);
-    }
-
-    async emailExists(email) {
     }
 
     async login(email, password) {
@@ -29,6 +26,10 @@ class UserService {
             }
             return user;
         });
+    }
+
+    async updateUser(uid, options) {
+        return User.findOneAndUpdate({uid: uid}, {$set: options});
     }
 }
 
