@@ -15,6 +15,7 @@
     "koa": "^2.3.0",
     "koa-better-body": "^3.0.4",
     "koa-better-router": "^2.1.1",
+    "koa-better-serve": "^2.0.3",
     "koa-logger": "^3.0.1",
     "koa-session": "^5.5.0",
     "lodash": "^4.17.4",

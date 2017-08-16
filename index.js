@@ -1,4 +1,5 @@
 'use strict';
+const serve = require('koa-better-serve');
 const koaLog = require('koa-logger');
 const Koa = require('koa');
 const mongoose = require('mongoose');
@@ -21,7 +22,7 @@ app.use(session(sessionConfig, app))
     .use(koaLog())
     .use(body());
 
-// error handle
+// error handle, so can just throw error in router
 app.use(async (ctx, next) => {
     try {
         await next();
@@ -42,7 +43,22 @@ app.use(async (ctx, next) => {
     }
 });
 
+app.use(async (ctx, next) => {
+    const lead = ctx.path.split('/')[1];
+    const apiRoute = api.middleware();
+    const pubRoute = serve('./wwwroot', '');
+    if (lead === 'api') {
+        return apiRoute.call(this, ctx, next);
+    } else {
+        return pubRoute.call(this, ctx, next);
+    }
+});
+
+/*
 app.use(api.middleware());
+app.use(serve('./public', ''));
+*/
+
 
 app.listen(config.port, () => {
     logger.info(`listening on ${config.port}`);

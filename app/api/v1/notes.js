@@ -63,6 +63,21 @@ router.addRoute('POST /notes/update/:id', async (ctx, next) => {
     const _id = ctx.params.id;
     const title = ctx.request.fields.title;
     const content = ctx.request.fields.content;
+    if (title == null && content == null) {
+        throw util.createError('missing parameters', Code.WRONG_PARAMETERS);
+    }
+    const note = await noteService.getById(_id);
+    if (note == null) {
+        throw util.createError('note not found', Code.NOT_FOUND);
+    }
+    if (note.uid != ctx.session.uid) {
+        throw util.createError('permission denied', Code.PERMISSION_DENIED);
+    }
+
+    await noteService.updateNote(_id, {title, content});
+    ctx.body = {
+        code: Code.OK
+    };
 });
 
 module.exports = router;
