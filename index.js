@@ -1,4 +1,5 @@
 'use strict';
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 const serve = require('koa-better-serve');
 const koaLog = require('koa-logger');
 const Koa = require('koa');
@@ -12,6 +13,8 @@ const body = require('koa-better-body');
 const session = require('koa-session');
 const api = require('./app/api/api');
 const app = new Koa();
+
+const wwwroot = process.env.NODE_ENV === 'development' ? './wwwroot/public' : './wwwroot/build';
 
 app.keys = ['saye like'];
 const sessionConfig = {
@@ -46,7 +49,7 @@ app.use(async (ctx, next) => {
 app.use(async (ctx, next) => {
     const lead = ctx.path.split('/')[1];
     const apiRoute = api.middleware();
-    const pubRoute = serve('./wwwroot', '');
+    const pubRoute = serve(wwwroot, '');
     if (lead === 'api') {
         return apiRoute.call(this, ctx, next);
     } else {
