@@ -14,7 +14,7 @@ const session = require('koa-session');
 const api = require('./app/api/api');
 const app = new Koa();
 
-const wwwroot = process.env.NODE_ENV === 'development' ? './wwwroot/public' : './wwwroot/build';
+const wwwroot = './wwwroot/build';
 
 app.keys = ['saye like'];
 const sessionConfig = {

@@ -61,7 +61,7 @@ router.addRoute('POST /user/signup', async (ctx, next) => {
     };
 });
 
-router.addRoute('GET /user/current', async (ctx, next) => {
+router.addRoute('GET /user/whoami', async (ctx, next) => {
     if (!ctx.session.uid) {
         throw util.userNotLoginError(ctx);
     }
