@@ -19,11 +19,11 @@
     "koa-logger": "^3.0.1",
     "koa-session": "^5.5.0",
     "lodash": "^4.17.13",
-    "log4js": "^2.3.3",
-    "mongoose": "^4.11.6"
+    "log4js": "^2.11.0",
+    "mongoose": "^4.13.21"
   },
   "devDependencies": {
     "eslint": "^4.4.1",
-    "mocha": "^3.5.0"
+    "mocha": "^10.2.0"
   }
 }
